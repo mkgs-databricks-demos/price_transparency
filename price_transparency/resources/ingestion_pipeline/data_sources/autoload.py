@@ -21,6 +21,7 @@ for definition in definitions:
         ,volume = spark.conf.get("volume")
         ,volume_sub_path = definition["volume_sub_path"]
         ,file_type = definition["file_type"]
+        ,file_desc = definition["file_desc"]
         ,cleanSource = definition["cleanSource"]
         ,cleanSource_retentionDuration = definition["cleanSource_retentionDuration"]
     )
