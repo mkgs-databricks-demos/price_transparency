@@ -4,6 +4,7 @@ from pyspark.sql.functions import col, row_number, lit, concat
 from pyspark.sql.window import Window
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType, MapType
+import gzip
 
 class Bronze:
     def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str, volume_sub_path: str, file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, cleanSource: str = "OFF"):
@@ -54,6 +55,17 @@ class Bronze:
         return {"status": "success"}
       except Exception as e:
         return {"status": "error", "message": str(e)}
+      
+    @staticmethod
+    @udf(MapType(StringType(), StringType()))
+    def unzip_copy_file(src_path, dest_path):
+      try:
+        with gzip.open(src_path, 'rb') as src_file, open(dest_path, 'wb') as dest_file:
+          dest_file.write(src_file.read())
+        return {"status": "success"}
+      except Exception as e:
+        return {"status": "error", "message": str(e)}
+    
       
     def stream_ingest(self):
       schema_definition = f"""
