@@ -4,9 +4,14 @@ resources:
       name: Price Transparency (Healthcare)
       tasks:
         - task_key: create_volume_subdirs
-          notebook_task:
-            notebook_path: ../src/00 - Create Volume Subpaths.ipynb
-            source: WORKSPACE
+          for_each_task:
+            inputs: '["in-network"]'
+            concurrency: 5
+            task:
+              task_key: create_volume_subdirs_iteration
+              notebook_task:
+                notebook_path: ../src/00 - Create Volume Subpaths.ipynb
+                source: WORKSPACE
       queue:
         enabled: true
       parameters:
