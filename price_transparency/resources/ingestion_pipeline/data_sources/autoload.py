@@ -19,7 +19,7 @@ for definition in definitions:
         ,catalog = spark.conf.get("catalog")
         ,schema = spark.conf.get("schema")
         ,volume = spark.conf.get("volume")
-        ,volume_sub_path = definition("volume_sub_path")
+        ,volume_sub_path = definition["volume_sub_path"]
         ,file_type = definition["file_type"]
         ,cleanSource = definition["cleanSource"]
         ,cleanSource_retentionDuration = definition["cleanSource_retentionDuration"]
