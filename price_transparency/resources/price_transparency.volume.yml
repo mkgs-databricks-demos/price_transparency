@@ -1,0 +1,8 @@
+resources:
+  volumes:
+    price_transparency_volume:
+      catalog_name: ${var.catalog}
+      name: ${var.volume}
+      schema_name: ${var.schema}
+      volume_type: MANAGED
+      comment: Landing location of raw health plan price transparency json files.

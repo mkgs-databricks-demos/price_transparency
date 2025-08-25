@@ -1,6 +1,6 @@
 resources:
   schemas:
-    my_schema:
+    price_transparency_schema:
       name: ${var.schema}
       grants:
         - principal: users
