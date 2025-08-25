@@ -76,7 +76,7 @@ class Bronze:
         file_block_length: BIGINT,
         file_modification_time: TIMESTAMP > NOT NULL COMMENT 'Metadata about the file ingested.'
         ,ingest_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() COMMENT 'The date timestamp the file was ingested.'
-        ,value STRING COMMENT 'The raw {self.file_desc} file contents.'
+        ,value BINARY COMMENT 'The raw {self.file_desc} file contents as BINARY.'
       """
 
       volume_path = f"/Volumes/{self.catalog}/{self.schema}/{self.volume}"
@@ -105,7 +105,7 @@ class Bronze:
       def stream_ingest_function():
           return (self.spark.readStream
             .format("cloudFiles")
-            .option("cloudFiles.format", "text")
+            .option("cloudFiles.format", "binaryFile")
             .option("wholeText", "true")
             .option("cloudFiles.cleanSource", self.cleanSource)
             .option("cloudFiles.cleanSource.retentionDuration", self.cleanSource_retentionDuration)
