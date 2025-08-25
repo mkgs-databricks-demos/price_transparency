@@ -4,5 +4,6 @@
   "file_extention": "json",
   "cleanSource": "OFF",
   "cleanSource_retentionDuration": "7 days",
-  "volume_sub_path": "in-network"
+  "volume_sub_path": "in-network",
+  "maxFilesPerTrigger": 1
 }
