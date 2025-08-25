@@ -6,7 +6,7 @@ resources:
         - task_key: create_volume_subdirs
           for_each_task:
             inputs: '["in-network", "in-network/uncompressed"]'
-            concurrency: 5
+            concurrency: 1
             task:
               task_key: create_volume_subdirs_iteration
               notebook_task:
