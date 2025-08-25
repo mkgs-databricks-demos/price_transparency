@@ -10,5 +10,6 @@ resources:
             - EXECUTE
         - principal: ${var.run_as_user}
           privileges:
-            - CAN_MANAGE
+            - MANAGE
+            - ALL_PRIVILEGES
       catalog_name: ${var.catalog}
