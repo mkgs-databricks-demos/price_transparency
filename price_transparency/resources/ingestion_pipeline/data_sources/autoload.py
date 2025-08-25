@@ -24,6 +24,7 @@ for definition in definitions:
         ,file_desc = definition["file_desc"]
         ,cleanSource = definition["cleanSource"]
         ,cleanSource_retentionDuration = definition["cleanSource_retentionDuration"]
+        ,maxFilesPerTrigger = 1 # Limit files per micro-batch to avoid OOM
     )
     
     BronzePipeline.stream_ingest()

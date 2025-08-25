@@ -6,7 +6,7 @@ from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType, MapType
 
 class Bronze:
-    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str, volume_sub_path: str, file_type: str, file_desc: str, cleanSource_retentionDuration: str, cleanSource: str = "OFF"):
+    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str, volume_sub_path: str, file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, cleanSource: str = "OFF"):
         self.spark = spark
         self.catalog = catalog
         self.schema = schema
@@ -14,6 +14,7 @@ class Bronze:
         self.volume_sub_path = volume_sub_path
         self.file_type = file_type
         self.file_desc = file_desc
+        self.maxFilesPerTrigger = maxFilesPerTrigger
         self.cleanSource_retentionDuration = cleanSource_retentionDuration
         self.cleanSource = cleanSource
     """
@@ -96,6 +97,7 @@ class Bronze:
             .option("wholeText", "true")
             .option("cloudFiles.cleanSource", self.cleanSource)
             .option("cloudFiles.cleanSource.retentionDuration", self.cleanSource_retentionDuration)
+            .option("maxFilesPerTrigger", self.maxFilesPerTrigger)
             .load(volume_path)
             .selectExpr("_metadata as file_metadata", "*")
           )
