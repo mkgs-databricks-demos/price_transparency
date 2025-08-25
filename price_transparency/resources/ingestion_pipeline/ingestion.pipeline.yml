@@ -20,3 +20,5 @@ resources:
       libraries:
         - glob:
             include: transformations/**
+        - glob:
+            include: data_sources/**
