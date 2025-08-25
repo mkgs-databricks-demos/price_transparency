@@ -11,7 +11,10 @@ resources:
               task_key: create_volume_subdirs_iteration
               notebook_task:
                 notebook_path: ../src/00 - Create Volume Subpaths.ipynb
+                base_parameters:
+                  subdirectory: "{{input}}"
                 source: WORKSPACE
+                
       queue:
         enabled: true
       parameters:
