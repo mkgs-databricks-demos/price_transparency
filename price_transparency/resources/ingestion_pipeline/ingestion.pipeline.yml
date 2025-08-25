@@ -2,10 +2,20 @@ resources:
   pipelines:
     ingestion_pipeline:
       name: price_transparency_ingestion_pipeline
+      edition: ADVANCED
+      continuous: false
       serverless: true
       channel: "PREVIEW"
       catalog: ${var.catalog}
       schema: ${var.schema}
+      configuration:
+        catalog: ${var.catalog}
+        schema_use: ${var.schema_use}
+        volume: ${var.volume}
+      event_log:
+        name: event_log_price_transparency_ingestion_pipeline
+        schema: ${var.event_log_schema}
+        catalog: ${var.event_log_catalog}
       root_path: "."
       libraries:
         - glob:

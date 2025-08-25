@@ -5,4 +5,12 @@ resources:
       name: ${var.volume}
       schema_name: ${var.schema}
       volume_type: MANAGED
+      grants:
+        - principal: users
+          privileges:
+            - READ_VOLUME
+        - principal: ${var.run_as_user}
+          privileges:
+            - MANAGE
+            - ALL_PRIVILEGES
       comment: Landing location of raw health plan price transparency json files.

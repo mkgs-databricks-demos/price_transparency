@@ -14,6 +14,8 @@ variables:
     description: The primary catalog to use
   schema:
     description: The primary schema to use in the primary <catalog>
+  schema_use: 
+    description: The prefixed development schema required if a prefix is set for the environment.
   volume:
     description: The primary volume used in the primary <catalog>.<schema>
   notifications:
@@ -29,7 +31,7 @@ targets:
     # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
     mode: development
     presets:
-      name_prefix: '[dev ${workspace.current_user.short_name}] ' 
+      name_prefix: '[${bundle.target} ${workspace.current_user.short_name}] ' 
       pipelines_development: true # set development to true for pipelines
       trigger_pause_status: PAUSED # set pause_status to PAUSED for all triggers and schedules
       jobs_max_concurrent_runs: 1 # set max_concurrent runs to 1 for all jobs
@@ -53,6 +55,7 @@ targets:
     variables:
       catalog: mgiglia
       schema: price_transparency
+      schema_use: ${bundle.target}_${workspace.current_user.short_name}_${var.schema}
       volume: landing
       notifications: []
       run_as_user: matthew.giglia@databricks.com
