@@ -3,7 +3,7 @@ resources:
     price_transparency_volume:
       catalog_name: ${var.catalog}
       name: ${var.volume}
-      schema_name: ${var.schema}
+      schema_name: ${resources.schemas.price_transparency_schema.name}
       volume_type: MANAGED
       grants:
         - principal: users

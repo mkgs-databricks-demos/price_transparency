@@ -10,8 +10,8 @@ resources:
       schema: ${resources.schemas.price_transparency_schema.name}
       configuration:
         catalog: ${var.catalog}
-        schema_use: ${var.schema_use}
-        volume: ${var.volume}
+        schema: ${resources.schemas.price_transparency_schema.name}
+        volume: ${resources.volumes.price_transparency_volume.name}
       event_log:
         name: event_log_price_transparency_ingestion_pipeline
         schema: ${resources.schemas.event_log_schema.name}

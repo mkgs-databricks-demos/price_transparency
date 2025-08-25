@@ -1,0 +1,18 @@
+resources:
+  jobs:
+    price_transparency_job:
+      name: Price Transparency (Healthcare)
+      tasks:
+        - task_key: create_volume_subdirs
+          notebook_task:
+            notebook_path: ../src/00 - Create Volume Subpaths.ipynb
+            source: WORKSPACE
+      queue:
+        enabled: true
+      parameters:
+        - name: catalog_use
+          default: ${var.catalog}
+        - name: schema_use
+          default: ${resources.schemas.price_transparency_schema.name}
+        - name: volume_use
+          default: ${resources.volumes.price_transparency_volume.name}

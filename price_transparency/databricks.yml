@@ -14,8 +14,6 @@ variables:
     description: The primary catalog to use
   schema:
     description: The primary schema to use in the primary <catalog>
-  schema_use: 
-    description: The prefixed development schema required if a prefix is set for the environment.
   volume:
     description: The primary volume used in the primary <catalog>.<schema>
   notifications:
@@ -59,7 +57,6 @@ targets:
     variables:
       catalog: mgiglia
       schema: price_transparency
-      schema_use: ${bundle.target}_${workspace.current_user.short_name}_${var.schema}
       volume: landing
       event_log_catalog: mgiglia
       event_log_schema: data_quality
