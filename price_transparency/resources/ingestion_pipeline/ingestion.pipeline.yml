@@ -7,14 +7,14 @@ resources:
       serverless: true
       channel: "PREVIEW"
       catalog: ${var.catalog}
-      schema: ${var.schema}
+      schema: ${resources.schemas.price_transparency_schema.name}
       configuration:
         catalog: ${var.catalog}
         schema_use: ${var.schema_use}
         volume: ${var.volume}
       event_log:
         name: event_log_price_transparency_ingestion_pipeline
-        schema: ${var.event_log_schema}
+        schema: ${resources.schemas.event_log_schema.name}
         catalog: ${var.event_log_catalog}
       root_path: "."
       libraries:

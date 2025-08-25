@@ -22,6 +22,10 @@ variables:
     description: The email addresses to use for failure notifications
   run_as_user:
     description: The principal the workflows and pipelines should be run as.  Required for permissions.  Typically a service principal in higher environments.  
+  event_log_catalog:
+    description: The catalog used for the pipeline event logs. 
+  event_log_schema:
+    description: The schema used for the pipeline event logs in the <event_log_catalog>.  
 
 targets:
   dev:
@@ -57,6 +61,8 @@ targets:
       schema: price_transparency
       schema_use: ${bundle.target}_${workspace.current_user.short_name}_${var.schema}
       volume: landing
+      event_log_catalog: mgiglia
+      event_log_schema: data_quality
       notifications: []
       run_as_user: matthew.giglia@databricks.com
 
