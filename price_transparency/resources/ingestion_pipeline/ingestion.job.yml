@@ -2,7 +2,7 @@
 resources:
   jobs:
     ingestion_job:
-      name: ingestion_job
+      name: price_transparency_ingestion_job
 
       trigger:
         # Run this job every day, exactly one day from the last run; see https://docs.databricks.com/api/workspace/jobs/create#trigger

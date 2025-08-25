@@ -1,7 +1,7 @@
 resources:
   pipelines:
     ingestion_pipeline:
-      name: ingestion_pipeline
+      name: price_transparency_ingestion_pipeline
       serverless: true
       channel: "PREVIEW"
       catalog: ${var.catalog}
