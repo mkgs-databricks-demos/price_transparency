@@ -53,6 +53,7 @@ targets:
     variables:
       catalog: mgiglia
       schema: price_transparency
+      volume: landing
       notifications: []
       run_as_user: matthew.giglia@databricks.com
 
