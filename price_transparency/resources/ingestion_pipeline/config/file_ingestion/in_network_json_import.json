@@ -1,0 +1,7 @@
+{
+  "file_type": "in-network-json",
+  "file_extention": "json",
+  "cleanSource": "OFF",
+  "cleanSource_retentionDuration": "7 days",
+  "volume_subpath": "in-network"
+}
