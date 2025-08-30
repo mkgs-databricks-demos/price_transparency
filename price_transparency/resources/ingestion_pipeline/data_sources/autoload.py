@@ -27,4 +27,4 @@ for definition in definitions:
         ,maxFilesPerTrigger = definition["maxFilesPerTrigger"] # Limit files per micro-batch to avoid OOM
     )
     
-    BronzePipeline.stream_ingest()
+    BronzePipeline.unzip_files()
