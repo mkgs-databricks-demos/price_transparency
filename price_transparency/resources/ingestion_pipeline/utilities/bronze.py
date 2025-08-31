@@ -8,7 +8,7 @@ import gzip
 import ijson
 
 class Bronze:
-    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str, volume_sub_path: str, file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, cleanSource: str = "OFF"):
+    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str, volume_sub_path: str, file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, cleanSource: str = "OFF", cloudFiles_useNotifications: str "false")
         self.spark = spark
         self.catalog = catalog
         self.schema = schema
@@ -19,6 +19,7 @@ class Bronze:
         self.maxFilesPerTrigger = maxFilesPerTrigger
         self.cleanSource_retentionDuration = cleanSource_retentionDuration
         self.cleanSource = cleanSource
+        self.cloudFiles_useNotifications = cloudFiles_useNotifications
     """
     The Bronze class represents a data structure for managing metadata related to a specific data resource.
     
@@ -88,6 +89,47 @@ class Bronze:
         return {"status": "success"}
       except Exception as e:
         return {"status": "error", "message": str(e)}
+      
+    def index_ingest(self):
+      """
+      Indexes files in the volume and copies them to the destination path.
+      """
+      volume_path = f"/Volumes/{self.catalog}/{self.schema}/{self.volume}"
+      if self.volume_sub_path:
+        volume_path = f"{volume_path}/{self.volume_sub_path}"
+
+      @dlt.table(
+          name=f"{catalog_use}.{schema_use}.{self.file_type}_bronze",
+          comment=f"Streaming bronze ingestion of {self.file_type} file metadata from {volume_path}",
+          table_properties={
+              'quality': 'bronze',
+              'delta.enableChangeDataFeed': 'true',
+              'delta.enableDeletionVectors': 'true',
+              'delta.enableRowTracking': 'true',
+              'delta.autoOptimize.optimizeWrite': 'true',
+              'delta.autoOptimize.autoCompact': 'true'
+          },
+          cluster_by_auto=True
+      )
+      def index_ingest_function():
+          return (
+              self.spark.readStream
+              .format("cloudFiles")
+              .option("cloudFiles.format", "text")
+              .option("fullText", "true")
+              .option("cloudFiles.useNotifications", self.cloudFiles_useNotifications)
+              .option("cloudFiles.cleanSource", self.cleanSource)
+              .option("cloudFiles.cleanSource.retentionDuration", self.cleanSource_retentionDuration)
+              .option("maxFilesPerTrigger", self.maxFilesPerTrigger)
+              .load(volume_path)
+              .selectExpr("_metadata as file_metadata", "CURRENT_TIMESTAMP() as ingest_time")
+              .withColumn("original_path", col("file_metadata.file_path"))
+              .withColumn("uncompressed_path", concat(lit(uncompression_path), col("file_metadata.file_name")))
+              .withColumn("uncompressed", self.unzip_copy_file(col("original_path"), col("uncompressed_path")))
+              .drop("original_path")
+          )
+    
+
       
 
     def unzip_files(self):
@@ -175,7 +217,7 @@ class Bronze:
           return (self.spark.readStream
             .format("cloudFiles")
             .option("cloudFiles.format", "json")
-            # .option("wholeText", "false")
+            .option("wholeText", "true")
             # .option("singleVariantColumn", "variant_value")
             .option("multiline", "true")
             .option("cloudFiles.inferColumnTypes", "false")

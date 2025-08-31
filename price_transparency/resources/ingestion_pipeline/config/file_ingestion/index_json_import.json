@@ -1,0 +1,9 @@
+{
+  "file_type": "index_json",
+  "file_desc": "machine readable file download url index json",
+  "file_extention": "json",
+  "cleanSource": "OFF",
+  "cleanSource_retentionDuration": "7 days",
+  "volume_sub_path": "index"
+  "maxFilesPerTrigger": 100
+}
