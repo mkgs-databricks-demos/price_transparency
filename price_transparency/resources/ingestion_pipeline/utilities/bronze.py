@@ -99,7 +99,7 @@ class Bronze:
         volume_path = f"{volume_path}/{self.volume_sub_path}"
 
       @dlt.table(
-          name=f"{catalog_use}.{schema_use}.{self.file_type}_bronze",
+          name=f"{self.catalog}.{self.schema}.{self.file_type}_bronze",
           comment=f"Streaming bronze ingestion of {self.file_type} file metadata from {volume_path}",
           table_properties={
               'quality': 'bronze',

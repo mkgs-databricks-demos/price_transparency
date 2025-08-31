@@ -21,6 +21,7 @@ for definition in definitions:
         file_desc=definition["file_desc"],
         cleanSource=definition["cleanSource"],
         cleanSource_retentionDuration=definition["cleanSource_retentionDuration"],
-        maxFilesPerTrigger=definition["maxFilesPerTrigger"]
+        maxFilesPerTrigger=definition["maxFilesPerTrigger"],
+        cloudFiles_useNotifications=definition.get("cloudFiles_useNotifications", "false")
     )
     BronzePipeline.index_ingest()
