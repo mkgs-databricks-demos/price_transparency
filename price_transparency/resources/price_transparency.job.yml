@@ -25,6 +25,8 @@ resources:
                   subdirectory: "{{input}}"
                 source: WORKSPACE
         - task_key: copy_index_to_volume
+          depends_on:
+            - task_key: create_volume_subdirs
           notebook_task:
             notebook_path: ../src/01 - Copy Index JSON to the Volume.ipynb
             base_parameters:
