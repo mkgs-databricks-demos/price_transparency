@@ -24,7 +24,7 @@ resources:
               outcome: "true"
           for_each_task:
             inputs: '["index", "in-network", "in-network/uncompressed", "in-network/original", "in-network/split"]'
-            concurrency: 1
+            concurrency: 10
             task:
               task_key: create_volume_subdirs_iteration
               notebook_task:
