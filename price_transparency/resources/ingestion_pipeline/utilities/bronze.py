@@ -8,7 +8,7 @@ import gzip
 import ijson
 
 class Bronze:
-    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str, volume_sub_path: str, file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, cleanSource: str = "OFF", cloudFiles_useNotifications: str "false")
+    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str, volume_sub_path: str, file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, cleanSource: str = "OFF", cloudFiles_useNotifications: str = "false"):
         self.spark = spark
         self.catalog = catalog
         self.schema = schema
@@ -123,10 +123,6 @@ class Bronze:
               .option("maxFilesPerTrigger", self.maxFilesPerTrigger)
               .load(volume_path)
               .selectExpr("_metadata as file_metadata", "CURRENT_TIMESTAMP() as ingest_time")
-              .withColumn("original_path", col("file_metadata.file_path"))
-              .withColumn("uncompressed_path", concat(lit(uncompression_path), col("file_metadata.file_name")))
-              .withColumn("uncompressed", self.unzip_copy_file(col("original_path"), col("uncompressed_path")))
-              .drop("original_path")
           )
     
 

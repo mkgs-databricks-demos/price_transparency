@@ -4,6 +4,6 @@
   "file_extention": "json",
   "cleanSource": "OFF",
   "cleanSource_retentionDuration": "7 days",
-  "volume_sub_path": "index"
+  "volume_sub_path": "index",
   "maxFilesPerTrigger": 100
 }
