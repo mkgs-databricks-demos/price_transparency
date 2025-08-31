@@ -29,7 +29,7 @@ resources:
             notebook_path: ../src/01 - Copy Index JSON to the Volume.ipynb
             base_parameters:
               subdirectory: ${var.index_subdirectory}
-              index_file_name: ${var.index_file_name}
+              index_file_name: ${var.initial_index_file_name}
             source: WORKSPACE
 
         # - task_key: refresh_pipeline
