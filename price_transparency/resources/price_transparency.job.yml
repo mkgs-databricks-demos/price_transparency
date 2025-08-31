@@ -13,7 +13,15 @@ resources:
         on_failure: ${var.notifications}
 
       tasks:
+        - task_key: initial_set_up
+          condition_task:
+            op: EQUAL_TO
+            left: "{{job.parameters.run_initial_setup}}"
+            right: "true"
         - task_key: create_volume_subdirs
+          depends_on:
+            - task_key: initial_set_up
+              outcome: "true"
           for_each_task:
             inputs: '["index", "in-network", "in-network/uncompressed", "in-network/original", "in-network/split"]'
             concurrency: 1
@@ -47,3 +55,5 @@ resources:
           default: ${resources.schemas.price_transparency_schema.name}
         - name: volume_use
           default: ${resources.volumes.price_transparency_volume.name}
+        - name: run_initial_setup
+          default: ${var.run_initial_setup}

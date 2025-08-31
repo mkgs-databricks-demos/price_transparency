@@ -24,6 +24,9 @@ variables:
     description: The catalog used for the pipeline event logs. 
   event_log_schema:
     description: The schema used for the pipeline event logs in the <event_log_catalog>.  
+  run_initial_setup:
+    description: Whether to run the initial set up tasks as part of the workflow.  
+    default: false
   index_subdirectory:
     description: The subdirectory in the Volume where the index JSON files for machine readable download urls are located.
     default: index
@@ -68,6 +71,7 @@ targets:
       event_log_schema: data_quality
       notifications: []
       run_as_user: matthew.giglia@databricks.com
+      run_initial_setup: true
 
   # prod:
   #   mode: production
