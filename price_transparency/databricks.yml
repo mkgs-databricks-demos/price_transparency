@@ -24,6 +24,12 @@ variables:
     description: The catalog used for the pipeline event logs. 
   event_log_schema:
     description: The schema used for the pipeline event logs in the <event_log_catalog>.  
+  index_subdirectory:
+    description: The subdirectory in the Volume where the index JSON files for machine readable download urls are located.
+    default: index
+  initial_index_file_name:   
+    description: The initial index file name in the Asset Bundle used for set up deployment.  
+    default: 2025-07-23_index.json
 
 targets:
   dev:

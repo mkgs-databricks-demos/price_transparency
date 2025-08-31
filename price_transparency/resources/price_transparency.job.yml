@@ -5,7 +5,7 @@ resources:
       tasks:
         - task_key: create_volume_subdirs
           for_each_task:
-            inputs: '["in-network", "in-network/uncompressed", "in-network/original"]'
+            inputs: '["index", "in-network", "in-network/uncompressed", "in-network/original", "in-network/split"]'
             concurrency: 1
             task:
               task_key: create_volume_subdirs_iteration
@@ -14,6 +14,13 @@ resources:
                 base_parameters:
                   subdirectory: "{{input}}"
                 source: WORKSPACE
+        - task_key: copy_index_to_volume
+          notebook_task:
+            notebook_path: ../src/01 - Copy Index JSON to the Volume.ipynb
+            base_parameters:
+              subdirectory: ${var.index_subdirectory}
+              index_file_name: ${var.index_file_name}
+            source: WORKSPACE
                 
       queue:
         enabled: true
