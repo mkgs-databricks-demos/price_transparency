@@ -1,7 +1,7 @@
 resources:
   pipelines:
-    ingestion_pipeline:
-      name: price_transparency_ingestion_pipeline
+    index_pipeline:
+      name: price_transparency_file_index_pipeline
       edition: ADVANCED
       continuous: false
       serverless: true
@@ -12,6 +12,7 @@ resources:
         catalog: ${var.catalog}
         schema: ${resources.schemas.price_transparency_schema.name}
         volume: ${resources.volumes.price_transparency_volume.name}
+        pipelines.streamingFlowReadOptionsEnabled: "true"
       event_log:
         name: event_log_price_transparency_ingestion_pipeline
         schema: ${resources.schemas.event_log_schema.name}
@@ -22,6 +23,8 @@ resources:
       root_path: "."
       libraries:
         - glob:
-            include: transformations/**
+            include: data_sources/index_initial_load.py
         - glob:
-            include: data_sources/**
+            include: transformations/index_file_bronze_cdf.py
+        - glob:
+            include: transformations/index_file_split.sql

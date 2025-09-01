@@ -23,7 +23,7 @@ resources:
             - task_key: initial_set_up
               outcome: "true"
           for_each_task:
-            inputs: '["index", "in-network", "in-network/uncompressed", "in-network/original", "in-network/split"]'
+            inputs: '["index", "in-network", "in-network/uncompressed", "in-network/original", "in-network/split", "allowed-amount", "allowed-amount/uncompressed", "allowed-amount/original", "allowed-amount/split"]'
             concurrency: 10
             task:
               task_key: create_volume_subdirs_iteration
