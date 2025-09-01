@@ -17,9 +17,9 @@ resources:
         name: event_log_price_transparency_ingestion_pipeline
         schema: ${resources.schemas.event_log_schema.name}
         catalog: ${var.event_log_catalog}
-      environment:
-        dependencies:
-          - ijson==3.4.*
+      # environment:
+      #   dependencies:
+      #     - ijson==3.4.*
       root_path: "."
       libraries:
         - glob:

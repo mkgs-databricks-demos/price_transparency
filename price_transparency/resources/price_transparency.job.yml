@@ -23,8 +23,8 @@ resources:
             - task_key: initial_set_up
               outcome: "true"
           for_each_task:
-            inputs: '["index", "in-network", "in-network/uncompressed", "in-network/original", "in-network/split", "allowed-amount", "allowed-amount/uncompressed", "allowed-amount/original", "allowed-amount/split"]'
-            concurrency: 10
+            inputs: '["index", "in-network", "allowed-amount", "in-network/uncompressed", "in-network/original", "in-network/split",  "allowed-amount/uncompressed", "allowed-amount/original", "allowed-amount/split"]'
+            concurrency: 3
             task:
               task_key: create_volume_subdirs_iteration
               notebook_task:
@@ -42,9 +42,14 @@ resources:
               index_file_name: ${var.initial_index_file_name}
             source: WORKSPACE
 
-        # - task_key: refresh_pipeline
-        #   pipeline_task:
-        #     pipeline_id: ${resources.pipelines.ingestion_pipeline.id}
+        - task_key: refresh_index_pipeline
+          depends_on:
+            - task_key: copy_index_to_volume
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.index_pipeline.id}
+          libraries:
+            - pypi:
+                package: ijson==3.4.*
                 
       queue:
         enabled: true
