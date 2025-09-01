@@ -5,7 +5,7 @@ resources:
       # tags:
       #   project: price_transparency
       #   businessUnit: Healthcare and Life Sciences
-      #   requestedBy: melissa.pang@databricks.com, kayla.grieme@databricks.com
+      #   requestedBy: melissa.pang@databricks.com kayla.grieme@databricks.com
       #   developer: matthew.giglia@databricks.com
       #   RemoveAfter: 2026-08-24
       edition: ADVANCED
