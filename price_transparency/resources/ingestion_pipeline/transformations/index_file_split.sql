@@ -6,7 +6,7 @@ CREATE OR REFRESH STREAMING TABLE in_network_file_index (
   file_type STRING,
   file_description STRING,
   file_location STRING,
-  file_downloaded MAP<STRING, STRING> DEFAULT NULL COMMENT 'Status of the file download, with an error message on failure.'
+  file_downloaded MAP<STRING, STRING> DEFAULT NULL COMMENT 'Status of the file download, with an error message on failure.',
   CONSTRAINT valid_file_type EXPECT (file_type = 'in_network_files'),
   CONSTRAINT file_location_not_null EXPECT (file_location IS NOT NULL)
 )
@@ -45,6 +45,7 @@ CREATE OR REFRESH STREAMING TABLE allowed_amount_file_index (
   file_type STRING,
   file_description STRING,
   file_location STRING,
+  file_downloaded MAP<STRING, STRING> DEFAULT NULL COMMENT 'Status of the file download, with an error message on failure.',
   CONSTRAINT valid_file_type EXPECT (file_type = 'allowed_amount_file'),
   CONSTRAINT file_location_not_null EXPECT (file_location IS NOT NULL)
 )
@@ -87,6 +88,7 @@ CREATE OR REFRESH STREAMING TABLE reporting_plans (
   reporting_plan_name STRING,
   file_description STRING,
   file_location STRING,
+  file_downloaded MAP<STRING, STRING> DEFAULT NULL COMMENT 'Status of the file download, with an error message on failure.',
   CONSTRAINT valid_file_type EXPECT (file_type = 'reporting_plans'),
   CONSTRAINT file_location_is_null EXPECT (file_location IS NULL)
 )
