@@ -31,7 +31,7 @@ def download_file(url, dest_path):
             new_name = original_name
         
         # Update the destination path with the new file name
-        dest_path = dest_path.replace(original_name, new_name)
+        dest_path = f"{dest_path}/{new_name}"
         
         with open(dest_path, 'wb') as dest_file:
             dest_file.write(response.content)
