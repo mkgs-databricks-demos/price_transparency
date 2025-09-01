@@ -49,7 +49,7 @@ targets:
       source_linked_deployment: true # default is true normally for development
       tags:
         project: price_transparency
-        businessUnit: Healthcare & Life Sciences
+        businessUnit: Healthcare and Life Sciences
         requestedBy: melissa.pang@databricks.com, kayla.grieme@databricks.com
         developer: matthew.giglia@databricks.com
         RemoveAfter: 2026-08-24
