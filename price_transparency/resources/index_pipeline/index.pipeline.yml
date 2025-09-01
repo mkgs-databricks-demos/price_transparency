@@ -2,6 +2,12 @@ resources:
   pipelines:
     index_pipeline:
       name: price_transparency_file_index_pipeline
+      tags:
+        project: price_transparency
+        businessUnit: Healthcare & Life Sciences
+        requestedBy: melissa.pang@databricks.com, kayla.grieme@databricks.com
+        developer: matthew.giglia@databricks.com
+        RemoveAfter: 2026-08-24
       edition: ADVANCED
       continuous: false
       serverless: true
