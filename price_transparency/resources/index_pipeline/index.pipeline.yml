@@ -2,12 +2,13 @@ resources:
   pipelines:
     index_pipeline:
       name: price_transparency_file_index_pipeline
-      # tags:
-      #   project: price_transparency
-      #   businessUnit: Healthcare and Life Sciences
-      #   requestedBy: melissa.pang@databricks.com kayla.grieme@databricks.com
-      #   developer: matthew.giglia@databricks.com
-      #   RemoveAfter: 2026-08-24
+      # not that tags are not set by presets for pipelines yet
+      tags:
+        project: price_transparency
+        businessUnit: Healthcare and Life Sciences
+        requestedBy: melissa.pang@databricks.com kayla.grieme@databricks.com
+        developer: matthew.giglia@databricks.com
+        RemoveAfter: 2026-08-24
       edition: ADVANCED
       continuous: false
       serverless: true
