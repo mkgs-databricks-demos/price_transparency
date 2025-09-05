@@ -25,4 +25,4 @@ mrf = MachineReadableFiles(
     ,cloudFiles_useNotifications=definition.get("cloudFiles_useNotifications", "true")
 )
 
-mrf.mrf_ingest()
+mrf.ingest()
