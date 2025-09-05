@@ -1,0 +1,37 @@
+resources:
+  pipelines:
+    index_pipeline:
+      name: price_transparency_machine_readable_file_pipeline
+      # not that tags are not set by presets for pipelines yet
+      tags:
+        project: price_transparency
+        businessUnit: Healthcare and Life Sciences
+        requestedBy: melissa.pang@databricks.com kayla.grieme@databricks.com
+        developer: matthew.giglia@databricks.com
+        RemoveAfter: 2026-08-24
+      edition: ADVANCED
+      continuous: false
+      serverless: true
+      channel: "PREVIEW"
+      catalog: ${var.catalog}
+      schema: ${resources.schemas.price_transparency_schema.name}
+      configuration:
+        catalog: ${var.catalog}
+        schema: ${resources.schemas.price_transparency_schema.name}
+        volume: ${resources.volumes.price_transparency_volume.name}
+        pipelines.streamingFlowReadOptionsEnabled: "true"
+      event_log:
+        name: event_log_price_transparency_ingestion_pipeline
+        schema: ${resources.schemas.event_log_schema.name}
+        catalog: ${var.event_log_catalog}
+      # environment:
+      #   dependencies:
+      #     - ijson==3.4.*
+      root_path: "."
+      libraries:
+        - glob:
+            include: data_sources/index_initial_load.py
+        - glob:
+            include: transformations/index_file_bronze_cdf.py
+        - glob:
+            include: transformations/index_file_split.sql

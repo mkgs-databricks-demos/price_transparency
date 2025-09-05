@@ -122,7 +122,7 @@ class Bronze:
               .option("cloudFiles.cleanSource.retentionDuration", self.cleanSource_retentionDuration)
               .option("maxFilesPerTrigger", self.maxFilesPerTrigger)
               .load(volume_path)
-              .selectExpr("sha2(concat(_metadata.*, CURRENT_TIMESTAMP()), 256) as index_file_source_id", "_metadata as file_metadata", "CURRENT_TIMESTAMP() as ingest_time", "*")
+              .selectExpr("sha2(concat(_metadata.*), 256) as index_file_source_id", "_metadata as file_metadata", "CURRENT_TIMESTAMP() as ingest_time", "_metadata.file_modification_time as rcrd_timestamp", "*")
           )
     
 

@@ -1,7 +1,7 @@
 import dlt
 
 @dlt.view()
-def index_file_cdf():
+def index_json_bronze_cdf():
     df = spark.readStream.option("readChangeFeed", "true").table("index_json_bronze")
     return df
 
@@ -12,11 +12,12 @@ def index_file_cdf():
   }
 )
 def index_variant_bronze():
-    df = spark.readStream.table("index_file_cdf")
+    df = spark.readStream.table("index_json_bronze")
     return df.selectExpr(
         "index_file_source_id",
         "file_metadata",
         "ingest_time",
+        "rcrd_timestamp",
         "try_parse_json(value) as variant_col"
     )
 
@@ -30,9 +31,9 @@ def index_variant_explode():
     df = spark.sql("""
         FROM STREAM(index_variant_bronze)
         ,LATERAL variant_explode(variant_col) |>
-        SELECT index_file_source_id, file_metadata, ingest_time, key, value |>
+        SELECT index_file_source_id, file_metadata, ingest_time, rcrd_timestamp, key, value |>
         PIVOT (first(value) FOR key IN ('reporting_entity_name', 'reporting_entity_type', 'reporting_structure')) |>
-        SELECT index_file_source_id, file_metadata, ingest_time, reporting_entity_name::string, reporting_entity_type::string, reporting_structure         
+        SELECT index_file_source_id, file_metadata, ingest_time, rcrd_timestamp, reporting_entity_name::string, reporting_entity_type::string, reporting_structure         
     """)
     return df
   
@@ -47,7 +48,11 @@ def index_variant_explode_reporting_structure():
         FROM STREAM(index_variant_explode)
         ,LATERAL variant_explode(reporting_structure) as reporting_structure
         ,LATERAL variant_explode(reporting_structure.value) as reporting_structure_value |>
-        SELECT index_file_source_id, file_metadata, ingest_time, reporting_entity_name, reporting_entity_type, reporting_structure_value.key as file_type, reporting_structure_value.value
+        SELECT index_file_source_id, file_metadata, ingest_time, rcrd_timestamp, reporting_entity_name, reporting_entity_type, reporting_structure_value.key as file_type, reporting_structure_value.value
     """)
     return df
+  
+@dlt.view()
+def index_variant_explode_reporting_structure_cdf():
+  return spark.readStream.option("readChangeFeed", "true").table("index_variant_explode_reporting_structure")
 

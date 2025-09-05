@@ -47,6 +47,7 @@ resources:
             - task_key: copy_index_to_volume
           pipeline_task:
             pipeline_id: ${resources.pipelines.index_pipeline.id}
+            full_refresh: true
           libraries:
             - pypi:
                 package: ijson==3.4.*
