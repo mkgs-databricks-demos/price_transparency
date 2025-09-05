@@ -1,7 +1,8 @@
 resources:
   pipelines:
-    index_pipeline:
-      name: price_transparency_machine_readable_file_pipeline
+    machine_readable_files_pipeline:
+      id: 4e0113da-662f-4596-b648-226d25385817
+      name: price_transparency_machine_readable_files
       # not that tags are not set by presets for pipelines yet
       tags:
         project: price_transparency
@@ -10,8 +11,16 @@ resources:
         developer: matthew.giglia@databricks.com
         RemoveAfter: 2026-08-24
       edition: ADVANCED
+      photon: true
       continuous: false
-      serverless: true
+      serverless: false
+      clusters:
+        - label: default
+          node_type_id: Standard_E32_v3
+          autoscale:
+            min_workers: 1
+            max_workers: 5
+            mode: ENHANCED
       channel: "PREVIEW"
       catalog: ${var.catalog}
       schema: ${resources.schemas.price_transparency_schema.name}
@@ -21,7 +30,7 @@ resources:
         volume: ${resources.volumes.price_transparency_volume.name}
         pipelines.streamingFlowReadOptionsEnabled: "true"
       event_log:
-        name: event_log_price_transparency_ingestion_pipeline
+        name: event_log_price_transparency_machine_readable_files
         schema: ${resources.schemas.event_log_schema.name}
         catalog: ${var.event_log_catalog}
       # environment:
@@ -30,8 +39,4 @@ resources:
       root_path: "."
       libraries:
         - glob:
-            include: data_sources/index_initial_load.py
-        - glob:
-            include: transformations/index_file_bronze_cdf.py
-        - glob:
-            include: transformations/index_file_split.sql
+            include: transformations/**
