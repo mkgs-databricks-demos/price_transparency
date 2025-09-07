@@ -1,0 +1,42 @@
+resources:
+  pipelines:
+    machine_readable_files_pipeline:
+      id: 4e0113da-662f-4596-b648-226d25385817
+      name: price_transparency_machine_readable_files
+      # not that tags are not set by presets for pipelines yet
+      tags:
+        project: price_transparency
+        businessUnit: Healthcare and Life Sciences
+        requestedBy: melissa.pang@databricks.com kayla.grieme@databricks.com
+        developer: matthew.giglia@databricks.com
+        RemoveAfter: 2026-08-24
+      edition: ADVANCED
+      photon: true
+      continuous: false
+      serverless: false
+      clusters:
+        - label: default
+          node_type_id: Standard_E32_v3
+          autoscale:
+            min_workers: 1
+            max_workers: 5
+            mode: ENHANCED
+      channel: "PREVIEW"
+      catalog: ${var.catalog}
+      schema: ${resources.schemas.price_transparency_schema.name}
+      configuration:
+        catalog: ${var.catalog}
+        schema: ${resources.schemas.price_transparency_schema.name}
+        volume: ${resources.volumes.price_transparency_volume.name}
+        pipelines.streamingFlowReadOptionsEnabled: "true"
+      event_log:
+        name: event_log_price_transparency_machine_readable_files
+        schema: ${resources.schemas.event_log_schema.name}
+        catalog: ${var.event_log_catalog}
+      # environment:
+      #   dependencies:
+      #     - ijson==3.4.*
+      root_path: "."
+      libraries:
+        - glob:
+            include: transformations/**

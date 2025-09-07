@@ -1,0 +1,92 @@
+resources:
+  jobs:
+    price_transparency_job:
+      name: Price Transparency (Healthcare)
+
+      trigger:
+        # Run this job every day, exactly one day from the last run; see https://docs.databricks.com/api/workspace/jobs/create#trigger
+        periodic:
+          interval: 1
+          unit: DAYS
+
+      email_notifications:
+        on_failure: ${var.notifications}
+
+      tasks:
+        - task_key: initial_set_up
+          condition_task:
+            op: EQUAL_TO
+            left: "{{job.parameters.run_initial_setup}}"
+            right: "true"
+
+        - task_key: create_volume_subdirs
+          depends_on:
+            - task_key: initial_set_up
+              outcome: "true"
+          for_each_task:
+            inputs: '["index", "in-network", "allowed-amount", "in-network/uncompressed", "in-network/original", "in-network/split",  "allowed-amount/uncompressed", "allowed-amount/original", "allowed-amount/split"]'
+            concurrency: 3
+            task:
+              task_key: create_volume_subdirs_iteration
+              notebook_task:
+                notebook_path: ../src/00 - Create Volume Subpaths.ipynb
+                base_parameters:
+                  subdirectory: "{{input}}"
+                source: WORKSPACE
+
+        - task_key: copy_index_to_volume
+          depends_on:
+            - task_key: create_volume_subdirs
+          notebook_task:
+            notebook_path: ../src/01 - Copy Index JSON to the Volume.ipynb
+            base_parameters:
+              subdirectory: ${var.index_subdirectory}
+              index_file_name: ${var.initial_index_file_name}
+            source: WORKSPACE
+
+        - task_key: copy_mpang_files_conditional
+          depends_on:
+            - task_key: create_volume_subdirs
+          condition_task:
+            op: EQUAL_TO
+            left: "{{job.parameters.copy_mpang_files}}"
+            right: "true"
+
+        - task_key: copy_mpang_files
+          depends_on:
+            - task_key: copy_mpang_files_conditional
+              outcome: "true"
+          for_each_task:
+            inputs: '[{"directory":"/Volumes/melissap/ardent_demo_bcbs_bronze/mrfs/in_network","output_folder":"/Volumes/mgiglia/dev_matthew_giglia_price_transparency/landing/in-network/uncompressed"},{"directory":"/Volumes/melissap/ardent_demo_bcbs_bronze/mrfs/allowed_amount","output_folder":"/Volumes/mgiglia/dev_matthew_giglia_price_transparency/landing/allowed-amount/uncompressed"}]'
+            concurrency: 2
+            task:
+              task_key: copy_mpang_files_iteration
+              notebook_task:
+                notebook_path: ../src/Decompress MRF Files.ipynb
+                base_parameters:
+                  directory: "{{input.directory}}"
+                  output_folder: "{{input.output_folder}}"
+
+        - task_key: refresh_index_pipeline
+          depends_on:
+            - task_key: copy_index_to_volume
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.index_pipeline.id}
+            full_refresh: true
+          libraries:
+            - pypi:
+                package: ijson==3.4.*
+                
+      queue:
+        enabled: true
+      parameters:
+        - name: catalog_use
+          default: ${var.catalog}
+        - name: schema_use
+          default: ${resources.schemas.price_transparency_schema.name}
+        - name: volume_use
+          default: ${resources.volumes.price_transparency_volume.name}
+        - name: run_initial_setup
+          default: ${var.run_initial_setup}
+        - name: copy_mpang_files
+          default: "true"

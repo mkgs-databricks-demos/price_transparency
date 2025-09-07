@@ -1,0 +1,88 @@
+# This is a Databricks asset bundle definition for ingestion.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: price_transparency
+  uuid: c2667aa0-f684-4a41-9245-7a56c93c3baa
+
+include:
+  - resources/*.yml
+  - resources/*/*.yml
+
+# Variable declarations. These variables are assigned in the dev/prod targets below.
+variables:
+  catalog:
+    description: The primary catalog to use
+  schema:
+    description: The primary schema to use in the primary <catalog>
+  volume:
+    description: The primary volume used in the primary <catalog>.<schema>
+  notifications:
+    description: The email addresses to use for failure notifications
+  run_as_user:
+    description: The principal the workflows and pipelines should be run as.  Required for permissions.  Typically a service principal in higher environments.  
+  event_log_catalog:
+    description: The catalog used for the pipeline event logs. 
+  event_log_schema:
+    description: The schema used for the pipeline event logs in the <event_log_catalog>.  
+  run_initial_setup:
+    description: Whether to run the initial set up tasks as part of the workflow.  
+    default: false
+  index_subdirectory:
+    description: The subdirectory in the Volume where the index JSON files for machine readable download urls are located.
+    default: index
+  initial_index_file_name:   
+    description: The initial index file name in the Asset Bundle used for set up deployment.  
+    default: 2025-07-23_index.json
+
+targets:
+  dev:
+    # The default target uses 'mode: development' to create a development copy.
+    # - Deployed resources get prefixed with '[dev my_user_name]'
+    # - Any job schedules and triggers are paused by default.
+    # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
+    mode: development
+    presets:
+      name_prefix: '[${bundle.target} ${workspace.current_user.short_name}] ' 
+      pipelines_development: true # set development to true for pipelines
+      trigger_pause_status: PAUSED # set pause_status to PAUSED for all triggers and schedules
+      jobs_max_concurrent_runs: 1 # set max_concurrent runs to 1 for all jobs
+      source_linked_deployment: true # default is true normally for development
+      tags:
+        project: price_transparency
+        businessUnit: Healthcare and Life Sciences
+        requestedBy: melissa.pang@databricks.com kayla.grieme@databricks.com
+        developer: matthew.giglia@databricks.com
+        RemoveAfter: 2026-08-24
+    default: true
+    workspace:
+      host: https://adb-984752964297111.11.azuredatabricks.net
+    permissions:
+      - user_name: ${var.run_as_user}
+        level: CAN_MANAGE
+      - group_name: users
+        level: CAN_VIEW
+    run_as:
+      user_name: ${var.run_as_user}
+    variables:
+      catalog: mgiglia
+      schema: price_transparency
+      volume: landing
+      event_log_catalog: mgiglia
+      event_log_schema: data_quality
+      notifications: []
+      run_as_user: matthew.giglia@databricks.com
+      run_initial_setup: true
+
+  # prod:
+  #   mode: production
+  #   workspace:
+  #     host: https://adb-984752964297111.11.azuredatabricks.net
+  #     # We explicitly deploy to /Workspace/Users/matthew.giglia@databricks.com to make sure we only have a single copy.
+  #     root_path: /Workspace/Users/matthew.giglia@databricks.com/.bundle/${bundle.name}/${bundle.target}
+  #   permissions:
+  #     - user_name: matthew.giglia@databricks.com
+  #       level: CAN_MANAGE
+  #   variables:
+  #     catalog: mgiglia
+  #     schema: price_transparency
+  #     notifications: [matthew.giglia@databricks.com]
