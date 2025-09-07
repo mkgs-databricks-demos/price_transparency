@@ -100,4 +100,4 @@ resources:
         - name: run_initial_setup
           default: ${var.run_initial_setup}
         - name: copy_mpang_files
-          default: "true"
+          default: ${var.copy_mpang_files}

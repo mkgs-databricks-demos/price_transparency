@@ -33,6 +33,9 @@ variables:
   initial_index_file_name:   
     description: The initial index file name in the Asset Bundle used for set up deployment.  
     default: 2025-07-23_index.json
+  copy_mpang_files:
+    description: Whether to source the gzipped files from Melissa's volume sub folder during development. 
+    default: false
 
 targets:
   dev:
@@ -72,6 +75,7 @@ targets:
       notifications: []
       run_as_user: matthew.giglia@databricks.com
       run_initial_setup: true
+      copy_mpang_files: true
 
   # prod:
   #   mode: production
