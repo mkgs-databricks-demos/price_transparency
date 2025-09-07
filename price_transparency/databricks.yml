@@ -74,8 +74,8 @@ targets:
       event_log_schema: data_quality
       notifications: []
       run_as_user: matthew.giglia@databricks.com
-      run_initial_setup: true
-      copy_mpang_files: true
+      run_initial_setup: false
+      copy_mpang_files: false
 
   # prod:
   #   mode: production

@@ -44,74 +44,74 @@ class MachineReadableFiles:
                 ,StructField("plan_market_type", StringType(), True)
                 ,StructField("last_updated_on", StringType(), True)
                 ,StructField("version", StringType(), True)
-                # ,StructFiled("provider_references", VariantType(), True)
-                ,StructField("provider_references", ArrayType(
-                    StructType([
-                        StructField("provider_group_id", IntegerType(), True),
-                        StructField("provider_groups", ArrayType(
-                            StructType([
-                                StructField("npi", ArrayType(IntegerType()), True),
-                                StructField("tin", StructType([
-                                    StructField("type", StringType(), True),
-                                    StructField("value", StringType(), True)
-                                ]), True)
-                            ])
-                        ), True),
-                        StructField("location", StringType(), True)
-                    ])
-                ), True)
-                # ,StructField("in_network", VariantType(), True)
-                ,StructField("in_network", ArrayType(
-                    StructType([
-                        StructField("negotiation_arrangement", StringType(), True),
-                        StructField("name", StringType(), True),
-                        StructField("billing_code_type", StringType(), True),
-                        StructField("billing_code_type_version", StringType(), True),
-                        StructField("billing_code", StringType(), True),
-                        StructField("description", StringType(), True),
-                        StructField("negotiated_rates", ArrayType(
-                            StructType([
-                                StructField("negotiated_prices", ArrayType(
-                                    StructType([
-                                        StructField("service_code", ArrayType(StringType()), True),
-                                        StructField("billing_class", StringType(), True),
-                                        StructField("negotiated_type", StringType(), True),
-                                        StructField("billing_code_modifier", ArrayType(StringType()), True),
-                                        StructField("negotiated_rate", DoubleType(), True),
-                                        StructField("expiration_date", StringType(), True),
-                                        StructField("additional_information", StringType(), True)
-                                    ])
-                                ), True),
-                                StructField("provider_groups", ArrayType(
-                                    StructType([
-                                        StructField("npi", ArrayType(IntegerType()), True),
-                                        StructField("tin", StructType([
-                                            StructField("type", StringType(), True),
-                                            StructField("value", StringType(), True)
-                                        ]), True)
-                                    ])
-                                ), True),
-                                StructField("provider_references", ArrayType(IntegerType()), True)
-                            ])
-                        ), True),
-                        StructField("covered_services", ArrayType(
-                            StructType([
-                                StructField("billing_code_type", StringType(), True),
-                                StructField("billing_code_type_version", StringType(), True),
-                                StructField("billing_code", StringType(), True),
-                                StructField("description", StringType(), True)
-                            ])
-                        ), True),
-                        StructField("bundled_codes", ArrayType(
-                            StructType([
-                                StructField("billing_code_type", StringType(), True),
-                                StructField("billing_code_type_version", StringType(), True),
-                                StructField("billing_code", StringType(), True),
-                                StructField("description", StringType(), True)
-                            ])
-                        ), True)
-                    ])
-                ), True)
+                ,StructFiled("provider_references", StringType(), True)
+                # ,StructField("provider_references", ArrayType(
+                #     StructType([
+                #         StructField("provider_group_id", IntegerType(), True),
+                #         StructField("provider_groups", ArrayType(
+                #             StructType([
+                #                 StructField("npi", ArrayType(IntegerType()), True),
+                #                 StructField("tin", StructType([
+                #                     StructField("type", StringType(), True),
+                #                     StructField("value", StringType(), True)
+                #                 ]), True)
+                #             ])
+                #         ), True),
+                #         StructField("location", StringType(), True)
+                #     ])
+                # ), True)
+                ,StructField("in_network", StringType(), True)
+                # ,StructField("in_network", ArrayType(
+                #     StructType([
+                #         StructField("negotiation_arrangement", StringType(), True),
+                #         StructField("name", StringType(), True),
+                #         StructField("billing_code_type", StringType(), True),
+                #         StructField("billing_code_type_version", StringType(), True),
+                #         StructField("billing_code", StringType(), True),
+                #         StructField("description", StringType(), True),
+                #         StructField("negotiated_rates", ArrayType(
+                #             StructType([
+                #                 StructField("negotiated_prices", ArrayType(
+                #                     StructType([
+                #                         StructField("service_code", ArrayType(StringType()), True),
+                #                         StructField("billing_class", StringType(), True),
+                #                         StructField("negotiated_type", StringType(), True),
+                #                         StructField("billing_code_modifier", ArrayType(StringType()), True),
+                #                         StructField("negotiated_rate", DoubleType(), True),
+                #                         StructField("expiration_date", StringType(), True),
+                #                         StructField("additional_information", StringType(), True)
+                #                     ])
+                #                 ), True),
+                #                 StructField("provider_groups", ArrayType(
+                #                     StructType([
+                #                         StructField("npi", ArrayType(IntegerType()), True),
+                #                         StructField("tin", StructType([
+                #                             StructField("type", StringType(), True),
+                #                             StructField("value", StringType(), True)
+                #                         ]), True)
+                #                     ])
+                #                 ), True),
+                #                 StructField("provider_references", ArrayType(IntegerType()), True)
+                #             ])
+                #         ), True),
+                #         StructField("covered_services", ArrayType(
+                #             StructType([
+                #                 StructField("billing_code_type", StringType(), True),
+                #                 StructField("billing_code_type_version", StringType(), True),
+                #                 StructField("billing_code", StringType(), True),
+                #                 StructField("description", StringType(), True)
+                #             ])
+                #         ), True),
+                #         StructField("bundled_codes", ArrayType(
+                #             StructType([
+                #                 StructField("billing_code_type", StringType(), True),
+                #                 StructField("billing_code_type_version", StringType(), True),
+                #                 StructField("billing_code", StringType(), True),
+                #                 StructField("description", StringType(), True)
+                #             ])
+                #         ), True)
+                #     ])
+                # ), True)
             ])
             self.schemaHints = """reporting_entity_name STRING,
                 reporting_entity_type STRING,
