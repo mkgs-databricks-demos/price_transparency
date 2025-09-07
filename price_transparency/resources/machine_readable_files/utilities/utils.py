@@ -44,7 +44,7 @@ class MachineReadableFiles:
                 ,StructField("plan_market_type", StringType(), True)
                 ,StructField("last_updated_on", StringType(), True)
                 ,StructField("version", StringType(), True)
-                ,StructFiled("provider_references", StringType(), True)
+                ,StructField("provider_references", StringType(), True)
                 # ,StructField("provider_references", ArrayType(
                 #     StructType([
                 #         StructField("provider_group_id", IntegerType(), True),
@@ -113,36 +113,18 @@ class MachineReadableFiles:
                 #     ])
                 # ), True)
             ])
-            self.schemaHints = """reporting_entity_name STRING,
+            self.schemaHints = """
+                reporting_entity_name STRING,
                 reporting_entity_type STRING,
+                plan_name STRING,
+                plan_id_type STRING,
+                plan_id STRING,
+                plan_market_type STRING,
                 last_updated_on STRING,
                 version STRING,
-                in_network ARRAY<STRUCT<
-                    negotiation_arrangement: STRING,
-                    name: STRING,
-                    billing_code_type: STRING,
-                    billing_code_type_version: STRING,
-                    billing_code: STRING,
-                    description: STRING,
-                    negotiated_rates: ARRAY<STRUCT<
-                    provider_groups: ARRAY<STRUCT<
-                        npi: ARRAY<STRING>,
-                        tin: STRUCT<
-                        type: STRING,
-                        value: STRING
-                        >
-                    >>,
-                    negotiated_prices: ARRAY<STRUCT<
-                        negotiated_type: STRING,
-                        negotiated_rate: DOUBLE,
-                        expiration_date: STRING,
-                        service_code: ARRAY<STRING>,
-                        billing_class: STRING,
-                        billing_code_modifier: ARRAY<STRING>,
-                        additional_information: STRING
-                    >>
-                    >>
-                >>"""
+                provider_references ARRAY<STRUCT<provider_group_id:DOUBLE,provider_groups:ARRAY<STRUCT<npi:ARRAY<DOUBLE>,tin:STRUCT<type:STRING,value:STRING>>>,location:STRING>>,
+                in_network ARRAY<STRUCT<negotiation_arrangement:STRING,name:STRING,billing_code_type:STRING,billing_code_type_version:STRING,billing_code:STRING,description:STRING,negotiated_rates:ARRAY<STRUCT<negotiated_prices:ARRAY<STRUCT<service_code:ARRAY<STRING>,billing_class:STRING,negotiated_type:STRING,billing_code_modifier:ARRAY<STRING>,negotiated_rate:DOUBLE,expiration_date:STRING,additional_information:STRING>>,provider_groups:ARRAY<STRUCT<npi:ARRAY<DOUBLE>,tin:STRUCT<type:STRING,value:STRING>>>,provider_references:ARRAY<DOUBLE>>>,covered_services:ARRAY<STRUCT<billing_code_type:STRING,billing_code_type_version:STRING,billing_code:STRING,description:STRING>>,bundled_codes:ARRAY<STRUCT<billing_code_type:STRING,billing_code_type_version:STRING,billing_code:STRING,description:STRING>>>>
+            """
         else:
             self.jsonSchema = None
             self.schemaHints = None

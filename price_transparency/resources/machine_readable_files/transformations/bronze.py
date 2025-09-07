@@ -7,7 +7,7 @@ definition = {
   "cleanSource": "OFF",
   "cleanSource_retentionDuration": "7 days",
   "volume_sub_path": "in-network/uncompressed",
-  # "maxFilesPerTrigger": 100,
+  "maxFilesPerTrigger": 100,
   "cloudFiles_useNotifications": "false"
 }
 
