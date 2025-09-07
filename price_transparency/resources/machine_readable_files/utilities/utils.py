@@ -34,7 +34,7 @@ class MachineReadableFiles:
         self.cloudFiles_useNotifications = cloudFiles_useNotifications
         
         # Assign schema for in-network file type
-        if self.file_type == "in_network":
+        if self.file_type == "in_network_json":
             self.jsonSchema = StructType([
                 StructField("reporting_entity_name", StringType(), True)
                 ,StructField("reporting_entity_type", StringType(), True)
@@ -113,8 +113,39 @@ class MachineReadableFiles:
                     ])
                 ), True)
             ])
+            self.schemaHints = """reporting_entity_name STRING,
+                reporting_entity_type STRING,
+                last_updated_on STRING,
+                version STRING,
+                in_network ARRAY<STRUCT<
+                    negotiation_arrangement: STRING,
+                    name: STRING,
+                    billing_code_type: STRING,
+                    billing_code_type_version: STRING,
+                    billing_code: STRING,
+                    description: STRING,
+                    negotiated_rates: ARRAY<STRUCT<
+                    provider_groups: ARRAY<STRUCT<
+                        npi: ARRAY<STRING>,
+                        tin: STRUCT<
+                        type: STRING,
+                        value: STRING
+                        >
+                    >>,
+                    negotiated_prices: ARRAY<STRUCT<
+                        negotiated_type: STRING,
+                        negotiated_rate: DOUBLE,
+                        expiration_date: STRING,
+                        service_code: ARRAY<STRING>,
+                        billing_class: STRING,
+                        billing_code_modifier: ARRAY<STRING>,
+                        additional_information: STRING
+                    >>
+                    >>
+                >>"""
         else:
             self.jsonSchema = None
+            self.schemaHints = None
 
     def ingest(self):
         """
@@ -150,9 +181,11 @@ class MachineReadableFiles:
                 .option("cloudFiles.cleanSource.retentionDuration", self.cleanSource_retentionDuration)
                 .option("maxFilesPerTrigger", self.maxFilesPerTrigger)
                 .option("rescuedDataColumn", "_rescued_data")
+                .option("multiLine", "false")
             )
             if self.jsonSchema:
-                df = reader.schema(self.jsonSchema).load(volume_path)
+                # df = reader.schema(self.jsonSchema).load(volume_path)
+                df = reader.option("cloudFiles.schemaHints", self.schemaHints).load(volume_path)
             else:
                 df = reader.load(volume_path)
             return (
