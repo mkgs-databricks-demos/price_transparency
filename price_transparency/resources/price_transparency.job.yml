@@ -72,9 +72,9 @@ resources:
           depends_on:
             - task_key: copy_mpang_files_conditional
               outcome: "false"
-            - task_key: create_volume_subdirs
+            - task_key: copy_index_to_volume
           # depends_on:
-          #   - task_key: create_volume_subdirs
+          #   - task_key: copy_index_to_volume
           pipeline_task:
             pipeline_id: ${resources.pipelines.index_pipeline.id}
             full_refresh: true
