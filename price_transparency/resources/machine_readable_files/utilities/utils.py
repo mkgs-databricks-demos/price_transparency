@@ -122,8 +122,78 @@ class MachineReadableFiles:
                 plan_market_type STRING,
                 last_updated_on STRING,
                 version STRING,
-                provider_references ARRAY<STRUCT<provider_group_id:DOUBLE,provider_groups:ARRAY<STRUCT<npi:ARRAY<DOUBLE>,tin:STRUCT<type:STRING,value:STRING>>>,location:STRING>>,
-                in_network ARRAY<STRUCT<negotiation_arrangement:STRING,name:STRING,billing_code_type:STRING,billing_code_type_version:STRING,billing_code:STRING,description:STRING,negotiated_rates:ARRAY<STRUCT<negotiated_prices:ARRAY<STRUCT<service_code:ARRAY<STRING>,billing_class:STRING,negotiated_type:STRING,billing_code_modifier:ARRAY<STRING>,negotiated_rate:DOUBLE,expiration_date:STRING,additional_information:STRING>>,provider_groups:ARRAY<STRUCT<npi:ARRAY<DOUBLE>,tin:STRUCT<type:STRING,value:STRING>>>,provider_references:ARRAY<DOUBLE>>>,covered_services:ARRAY<STRUCT<billing_code_type:STRING,billing_code_type_version:STRING,billing_code:STRING,description:STRING>>,bundled_codes:ARRAY<STRUCT<billing_code_type:STRING,billing_code_type_version:STRING,billing_code:STRING,description:STRING>>>>
+                provider_references ARRAY<
+                    STRUCT<
+                        provider_group_id:DOUBLE,
+                        provider_groups:ARRAY<
+                            STRUCT<
+                                npi:ARRAY<DOUBLE>,
+                                tin:STRUCT<
+                                    type:STRING,
+                                    value:STRING
+                                >
+                            >
+                        >,
+                        location:STRING
+                        >
+                >,
+                in_network ARRAY<
+                    STRUCT<
+                        negotiation_arrangement:STRING,
+                        name:STRING,
+                        billing_code_type:STRING,
+                        billing_code_type_version:STRING,
+                        billing_code:STRING,
+                        description:STRING,negotiated_rates:ARRAY<
+                            STRUCT<
+                                negotiated_prices:ARRAY<
+                                    STRUCT<
+                                        service_code:ARRAY<
+                                            STRING
+                                        >,
+                                        billing_class:STRING,
+                                        negotiated_type:STRING,
+                                        billing_code_modifier:ARRAY<
+                                            STRING
+                                        >,
+                                        negotiated_rate:DOUBLE,
+                                        expiration_date:STRING,
+                                        additional_information:STRING
+                                    >
+                                >,
+                                provider_groups:ARRAY<
+                                    STRUCT<
+                                        npi:ARRAY<
+                                            DOUBLE
+                                        >,
+                                        tin:STRUCT<
+                                            type:STRING,
+                                            value:STRING
+                                        >
+                                    >
+                                >,
+                                provider_references:ARRAY<
+                                    DOUBLE
+                                >
+                            >
+                        >,
+                        covered_services:ARRAY<
+                            STRUCT<
+                                billing_code_type:STRING,
+                                billing_code_type_version:STRING,
+                                billing_code:STRING,description:STRING
+                            >
+                        >
+                        ,bundled_codes:ARRAY<
+                            STRUCT<
+                                billing_code_type:STRING,
+                                billing_code_type_version:STRING,
+                                billing_code:STRING,
+                                description:STRING
+                            >
+                        >
+                    >
+                >
             """
         else:
             self.jsonSchema = None
@@ -163,7 +233,7 @@ class MachineReadableFiles:
                 .option("cloudFiles.cleanSource.retentionDuration", self.cleanSource_retentionDuration)
                 .option("maxFilesPerTrigger", self.maxFilesPerTrigger)
                 .option("rescuedDataColumn", "_rescued_data")
-                .option("multiLine", "false")
+                .option("multiLine", "true")
             )
             if self.jsonSchema:
                 # df = reader.schema(self.jsonSchema).load(volume_path)
