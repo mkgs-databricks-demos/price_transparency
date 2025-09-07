@@ -66,19 +66,29 @@ resources:
                 base_parameters:
                   directory: "{{input.directory}}"
                   output_folder: "{{input.output_folder}}"
+              environment_key: serverless_4
 
         - task_key: refresh_index_pipeline
           depends_on:
-            - task_key: copy_index_to_volume
+            - task_key: copy_mpang_files_conditional
+              outcome: "false"
+          # depends_on:
+          #   - task_key: create_volume_subdirs
           pipeline_task:
             pipeline_id: ${resources.pipelines.index_pipeline.id}
             full_refresh: true
           libraries:
             - pypi:
                 package: ijson==3.4.*
-                
+
+      environments: 
+        - environment_key: serverless_4
+          spec: 
+            environment_version: "4"
+
       queue:
         enabled: true
+
       parameters:
         - name: catalog_use
           default: ${var.catalog}
