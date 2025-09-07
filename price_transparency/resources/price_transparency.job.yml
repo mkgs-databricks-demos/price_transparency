@@ -85,6 +85,7 @@ resources:
         - environment_key: serverless_4
           spec: 
             environment_version: "4"
+            dependencies: []
 
       queue:
         enabled: true
