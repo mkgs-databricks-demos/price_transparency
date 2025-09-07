@@ -72,6 +72,7 @@ resources:
           depends_on:
             - task_key: copy_mpang_files_conditional
               outcome: "false"
+            - task_key: create_volume_subdirs
           # depends_on:
           #   - task_key: create_volume_subdirs
           pipeline_task:
