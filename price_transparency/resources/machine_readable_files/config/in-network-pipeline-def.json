@@ -4,7 +4,7 @@
   "file_extention": "json",
   "cleanSource": "OFF",
   "cleanSource_retentionDuration": "7 days",
-  "volume_sub_path": "in-network/uncompressed",
+  "volume_sub_path": "in-network/test",
   "maxFilesPerTrigger": 1,
   "cloudFiles_useNotifications": "false",
   "useSchemaHints": false,
