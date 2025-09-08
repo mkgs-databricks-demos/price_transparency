@@ -2,6 +2,8 @@ import dlt
 from pyspark.sql.functions import udf
 from pyspark.sql import SparkSession
 from pyspark.sql.types import * # StructType, StructField, StringType, ArrayType, DoubleType, IntegerType, FloatType, VariantType
+import json
+import re
 
 @udf(returnType=FloatType())
 def distance_km(distance_miles):
@@ -20,7 +22,7 @@ class MachineReadableFiles:
         cloudFiles_useNotifications: Enables event-based notifications for new files
         jsonSchema: Explicit schema for JSON files (set if file_type == "in-network")
     """
-    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str,  file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, volume_sub_path: str = None, cleanSource: str = "OFF", cloudFiles_useNotifications: str = "false", schemaHints: str = None, jsonSchema: str = None, useSchemaHints: bool = True):
+    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str,  file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, volume_sub_path: str = None, cleanSource: str = "OFF", cloudFiles_useNotifications: str = "false", schemaHints: str = None, jsonSchema: str = None, simpleStringJson: str = None, useSchemaHints: bool = True):
         self.spark = spark
         self.catalog = catalog
         self.schema = schema
@@ -33,9 +35,8 @@ class MachineReadableFiles:
         self.cleanSource = cleanSource
         self.cloudFiles_useNotifications = cloudFiles_useNotifications
         self.schemaHints = schemaHints
-        self.jsonSchema = jsonSchema
         self.useSchemaHints = useSchemaHints
-        
+        self.jsonSchema = jsonSchema
         
     def ingest(self):
         """
@@ -76,7 +77,7 @@ class MachineReadableFiles:
             )
             if self.useSchemaHints:
                 df = reader.option("cloudFiles.schemaHints", self.schemaHints).load(volume_path)
-            elif self.jsonSchema:
+            elif self.jsonSchema is not None:
                 df = reader.schema(self.jsonSchema).load(volume_path)
             else:
                 df = reader.load(volume_path)

@@ -21,6 +21,7 @@ for definition in definitions:
       ,useSchemaHints = definition.get("useSchemaHints")
       ,schemaHints = definition.get("schemaHints")
       ,jsonSchema = definition.get("jsonSchema")
+      ,simpleStringJson = definition.get("simpleStringJson")
       ,cleanSource=definition.get("cleanSource", "OFF")
       ,cleanSource_retentionDuration=definition.get("cleanSource_retentionDuration", "7 days")
       ,maxFilesPerTrigger=definition.get("maxFilesPerTrigger", 100)
