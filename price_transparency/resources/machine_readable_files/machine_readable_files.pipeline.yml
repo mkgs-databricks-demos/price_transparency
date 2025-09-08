@@ -17,7 +17,7 @@ resources:
       clusters:
         - label: default
           aws_attributes: {}
-          node_type_id: Standard_E32_v5
+          node_type_id: Standard_E32_v3
           autoscale:
             min_workers: 2
             max_workers: 5
