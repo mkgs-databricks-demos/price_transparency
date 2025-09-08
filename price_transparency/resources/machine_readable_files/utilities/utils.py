@@ -20,7 +20,7 @@ class MachineReadableFiles:
         cloudFiles_useNotifications: Enables event-based notifications for new files
         jsonSchema: Explicit schema for JSON files (set if file_type == "in-network")
     """
-    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str, volume_sub_path: str, file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, cleanSource: str = "OFF", cloudFiles_useNotifications: str = "false", schemaHints: str = None, jsonSchema: str = None):
+    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str,  file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, volume_sub_path: str = None, cleanSource: str = "OFF", cloudFiles_useNotifications: str = "false", schemaHints: str = None, jsonSchema: str = None, useSchemaHints: bool = True):
         self.spark = spark
         self.catalog = catalog
         self.schema = schema
@@ -34,212 +34,9 @@ class MachineReadableFiles:
         self.cloudFiles_useNotifications = cloudFiles_useNotifications
         self.schemaHints = schemaHints
         self.jsonSchema = jsonSchema
+        self.useSchemaHints = useSchemaHints
         
-        # Assign schema for in-network file type
-        if self.file_type == "in_network_json":
-            self.jsonSchema = StructType([
-                StructField("reporting_entity_name", StringType(), True)
-                ,StructField("reporting_entity_type", StringType(), True)
-                ,StructField("plan_name", StringType(), True)
-                ,StructField("plan_id_type", StringType(), True)
-                ,StructField("plan_id", StringType(), True)
-                ,StructField("plan_market_type", StringType(), True)
-                ,StructField("last_updated_on", StringType(), True)
-                ,StructField("version", StringType(), True)
-                # ,StructField("provider_references", StringType(), True)
-                ,StructField("provider_references", ArrayType(
-                    StructType([
-                        StructField("provider_group_id", IntegerType(), True),
-                        StructField("provider_groups", ArrayType(
-                            StructType([
-                                StructField("npi", ArrayType(IntegerType()), True),
-                                StructField("tin", StructType([
-                                    StructField("type", StringType(), True),
-                                    StructField("value", StringType(), True)
-                                ]), True)
-                            ])
-                        ), True),
-                        StructField("location", StringType(), True)
-                    ])
-                ), True)
-                # ,StructField("in_network", StringType(), True)
-                ,StructField("in_network", ArrayType(
-                    StructType([
-                        StructField("negotiation_arrangement", StringType(), True),
-                        StructField("name", StringType(), True),
-                        StructField("billing_code_type", StringType(), True),
-                        StructField("billing_code_type_version", StringType(), True),
-                        StructField("billing_code", StringType(), True),
-                        StructField("description", StringType(), True),
-                        StructField("negotiated_rates", ArrayType(
-                            StructType([
-                                StructField("negotiated_prices", ArrayType(
-                                    StructType([
-                                        StructField("service_code", ArrayType(StringType()), True),
-                                        StructField("billing_class", StringType(), True),
-                                        StructField("negotiated_type", StringType(), True),
-                                        StructField("billing_code_modifier", ArrayType(StringType()), True),
-                                        StructField("negotiated_rate", DoubleType(), True),
-                                        StructField("expiration_date", StringType(), True),
-                                        StructField("additional_information", StringType(), True)
-                                    ])
-                                ), True),
-                                StructField("provider_groups", ArrayType(
-                                    StructType([
-                                        StructField("npi", ArrayType(IntegerType()), True),
-                                        StructField("tin", StructType([
-                                            StructField("type", StringType(), True),
-                                            StructField("value", StringType(), True)
-                                        ]), True)
-                                    ])
-                                ), True),
-                                StructField("provider_references", ArrayType(IntegerType()), True)
-                            ])
-                        ), True),
-                        StructField("covered_services", ArrayType(
-                            StructType([
-                                StructField("billing_code_type", StringType(), True),
-                                StructField("billing_code_type_version", StringType(), True),
-                                StructField("billing_code", StringType(), True),
-                                StructField("description", StringType(), True)
-                            ])
-                        ), True),
-                        StructField("bundled_codes", ArrayType(
-                            StructType([
-                                StructField("billing_code_type", StringType(), True),
-                                StructField("billing_code_type_version", StringType(), True),
-                                StructField("billing_code", StringType(), True),
-                                StructField("description", StringType(), True)
-                            ])
-                        ), True)
-                    ])
-                ), True)
-            ])
-            # self.schemaHints = """
-            #     reporting_entity_name STRING,
-            #     reporting_entity_type STRING,
-            #     plan_name STRING,
-            #     plan_id_type STRING,
-            #     plan_id STRING,
-            #     plan_market_type STRING,
-            #     last_updated_on STRING,
-            #     version STRING,
-                # provider_references ARRAY<
-                #     STRUCT<
-                #         provider_group_id:DOUBLE,
-                #         provider_groups:ARRAY<
-                #             STRUCT<
-                #                 npi:ARRAY<DOUBLE>,
-                #                 tin:STRUCT<
-                #                     type:STRING,
-                #                     value:STRING
-                #                 >
-                #             >
-                #         >,
-                #         location:STRING
-                #         >
-                # >,
-                # in_network ARRAY<
-                #     STRUCT<
-                #         negotiation_arrangement:STRING,
-                #         name:STRING,
-                #         billing_code_type:STRING,
-                #         billing_code_type_version:STRING,
-                #         billing_code:STRING,
-                #         description:STRING,
-                #         negotiated_rates:ARRAY<
-                #             STRUCT<
-                #                 negotiated_prices:ARRAY<
-                #                     STRUCT<
-                #                         service_code:ARRAY<
-                #                             STRING
-                #                         >,
-                #                         billing_class:STRING,
-                #                         negotiated_type:STRING,
-                #                         billing_code_modifier:ARRAY<
-                #                             STRING
-                #                         >,
-                #                         negotiated_rate:DOUBLE,
-                #                         expiration_date:STRING,
-                #                         additional_information:STRING
-                #                     >
-                #                 >,
-                #                 provider_groups:ARRAY<
-                #                     STRUCT<
-                #                         npi:ARRAY<
-                #                             DOUBLE
-                #                         >,
-                #                         tin:STRUCT<
-                #                             type:STRING,
-                #                             value:STRING
-                #                         >
-                #                     >
-                #                 >,
-                #                 provider_references:ARRAY<
-                #                     DOUBLE
-                #                 >
-                #             >
-                #         >,
-                #         covered_services:ARRAY<
-                #             STRUCT<
-                #                 billing_code_type:STRING,
-                #                 billing_code_type_version:STRING,
-                #                 billing_code:STRING,description:STRING
-                #             >
-                #         >
-                #         ,bundled_codes:ARRAY<
-                #             STRUCT<
-                #                 billing_code_type:STRING,
-                #                 billing_code_type_version:STRING,
-                #                 billing_code:STRING,
-                #                 description:STRING
-                #             >
-                #         >
-                #     >
-                # >
-            # """
-            self.schemaHints = """
-                reporting_entity_name STRING,
-                reporting_entity_type STRING,
-                plan_name STRING,
-                plan_id_type STRING,
-                plan_id STRING,
-                plan_market_type STRING,
-                last_updated_on STRING,
-                version STRING,
-                provider_references ARRAY<
-                    STRUCT<
-                        provider_group_id:DOUBLE,
-                        provider_groups:ARRAY<
-                            STRING
-                        >,
-                        location:STRING
-                        >
-                >,
-                in_network ARRAY<
-                    STRUCT<
-                        negotiation_arrangement:STRING,
-                        name:STRING,
-                        billing_code_type:STRING,
-                        billing_code_type_version:STRING,
-                        billing_code:STRING,
-                        description:STRING,
-                        negotiated_rates:ARRAY<
-                            STRING
-                        >,
-                        covered_services:ARRAY<
-                            STRING
-                        >
-                        ,bundled_codes:ARRAY<
-                            STRING
-                        >
-                    >
-                >
-            """
-        else:
-            self.jsonSchema = None
-            self.schemaHints = None
-
+        
     def ingest(self):
         """
         Indexes files in the volume and copies them to the destination path using best practices for cloudFiles with JSON.
@@ -277,9 +74,10 @@ class MachineReadableFiles:
                 .option("cloudFiles.schemaEvolutionMode", "rescue")
                 .option("multiLine", "true")
             )
-            if self.jsonSchema:
+            if self.useSchemaHints:
+                df = reader.option("cloudFiles.schemaHints", self.schemaHints).load(volume_path)
+            elif self.jsonSchema:
                 df = reader.schema(self.jsonSchema).load(volume_path)
-                # df = reader.option("cloudFiles.schemaHints", self.schemaHints).load(volume_path)
             else:
                 df = reader.load(volume_path)
             return (
