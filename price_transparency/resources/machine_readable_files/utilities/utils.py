@@ -1,7 +1,7 @@
 import dlt
 from pyspark.sql.functions import udf
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, StringType, ArrayType, DoubleType, IntegerType, FloatType, VariantType
+from pyspark.sql.types import * # StructType, StructField, StringType, ArrayType, DoubleType, IntegerType, FloatType, VariantType
 
 @udf(returnType=FloatType())
 def distance_km(distance_miles):
@@ -20,7 +20,7 @@ class MachineReadableFiles:
         cloudFiles_useNotifications: Enables event-based notifications for new files
         jsonSchema: Explicit schema for JSON files (set if file_type == "in-network")
     """
-    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str, volume_sub_path: str, file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, cleanSource: str = "OFF", cloudFiles_useNotifications: str = "false"):
+    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str, volume_sub_path: str, file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, cleanSource: str = "OFF", cloudFiles_useNotifications: str = "false", schemaHints: str = None, jsonSchema: str = None):
         self.spark = spark
         self.catalog = catalog
         self.schema = schema
@@ -32,6 +32,8 @@ class MachineReadableFiles:
         self.cleanSource_retentionDuration = cleanSource_retentionDuration
         self.cleanSource = cleanSource
         self.cloudFiles_useNotifications = cloudFiles_useNotifications
+        self.schemaHints = schemaHints
+        self.jsonSchema = jsonSchema
         
         # Assign schema for in-network file type
         if self.file_type == "in_network_json":
@@ -272,11 +274,12 @@ class MachineReadableFiles:
                 .option("cloudFiles.cleanSource.retentionDuration", self.cleanSource_retentionDuration)
                 .option("maxFilesPerTrigger", self.maxFilesPerTrigger)
                 .option("rescuedDataColumn", "_rescued_data")
+                .option("cloudFiles.schemaEvolutionMode", "rescue")
                 .option("multiLine", "true")
             )
             if self.jsonSchema:
-                # df = reader.schema(self.jsonSchema).load(volume_path)
-                df = reader.option("cloudFiles.schemaHints", self.schemaHints).load(volume_path)
+                df = reader.schema(self.jsonSchema).load(volume_path)
+                # df = reader.option("cloudFiles.schemaHints", self.schemaHints).load(volume_path)
             else:
                 df = reader.load(volume_path)
             return (
