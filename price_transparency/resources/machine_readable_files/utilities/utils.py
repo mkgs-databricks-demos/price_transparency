@@ -22,7 +22,7 @@ class MachineReadableFiles:
         cloudFiles_useNotifications: Enables event-based notifications for new files
         jsonSchema: Explicit schema for JSON files (set if file_type == "in-network")
     """
-    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str,  file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, volume_sub_path: str = None, cleanSource: str = "OFF", cloudFiles_useNotifications: str = "false", schemaHints: str = None, jsonSchema: str = None, simpleStringJson: str = None, useSchemaHints: bool = True):
+    def __init__(self, spark: SparkSession, catalog: str, schema: str, volume: str,  file_type: str, file_desc: str, maxFilesPerTrigger: int, cleanSource_retentionDuration: str, volume_sub_path: str = None, cleanSource: str = "OFF", cloudFiles_useNotifications: str = "false", schemaHints: str = None, jsonSchema: str = None, useSchemaHints: bool = True):
         self.spark = spark
         self.catalog = catalog
         self.schema = schema
@@ -62,6 +62,51 @@ class MachineReadableFiles:
         )
         @dlt.expect_or_drop("valid_json", "_rescued_data is null")
         def mrf_ingest_def():
+            reader = (
+                self.spark.readStream
+                .format("cloudFiles")
+                .option("cloudFiles.format", "json")
+                .option("cloudFiles.inferColumnTypes", "false")  # Use explicit schema
+                .option("cloudFiles.useNotifications", self.cloudFiles_useNotifications)
+                .option("cloudFiles.cleanSource", self.cleanSource)
+                .option("cloudFiles.cleanSource.retentionDuration", self.cleanSource_retentionDuration)
+                .option("maxFilesPerTrigger", self.maxFilesPerTrigger)
+                .option("rescuedDataColumn", "_rescued_data")
+                .option("cloudFiles.schemaEvolutionMode", "rescue")
+                .option("multiLine", "true")
+            )
+            if self.useSchemaHints:
+                df = reader.option("cloudFiles.schemaHints", self.schemaHints).load(volume_path)
+            elif self.jsonSchema is not None:
+                df = reader.schema(self.jsonSchema).load(volume_path)
+            else:
+                df = reader.load(volume_path)
+            return (
+                df.selectExpr(
+                    "sha2(concat(_metadata.*), 256) as index_file_source_id",
+                    "_metadata as file_metadata",
+                    "CURRENT_TIMESTAMP() as ingest_time",
+                    "_metadata.file_modification_time as rcrd_timestamp",
+                    "*"
+                )
+            )
+
+        @dlt.table(
+            name=f"{self.catalog}.{self.schema}.{self.file_type}_quarantine",
+            comment=f"Invalid JSON records from streaming bronze ingestion of {self.file_type} machine readable files from {volume_path}",
+            table_properties={
+                'quality': 'bronze',
+                'delta.enableChangeDataFeed': 'true',
+                'delta.enableDeletionVectors': 'true',
+                'delta.enableRowTracking': 'true',
+                'delta.autoOptimize.optimizeWrite': 'true',
+                'delta.autoOptimize.autoCompact': 'true',
+                'delta.feature.variantType-preview': 'supported'
+            },
+            cluster_by_auto=True
+        )
+        @dlt.expect_or_drop("valid_json", "_rescued_data is not null")
+        def mrf_ingest_quarantine_def():
             reader = (
                 self.spark.readStream
                 .format("cloudFiles")

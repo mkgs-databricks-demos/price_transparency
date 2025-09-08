@@ -15,17 +15,16 @@ for definition in definitions:
       ,catalog = "mgiglia"
       ,schema = "dev_matthew_giglia_price_transparency"
       ,volume= "landing"
-      ,volume_sub_path=definition.get("volume_sub_path")
-      ,file_type=definition.get("file_type")
-      ,file_desc=definition.get("file_desc")
+      ,volume_sub_path = definition.get("volume_sub_path")
+      ,file_type = definition.get("file_type")
+      ,file_desc = definition.get("file_desc")
       ,useSchemaHints = definition.get("useSchemaHints")
       ,schemaHints = definition.get("schemaHints")
       ,jsonSchema = definition.get("jsonSchema")
-      ,simpleStringJson = definition.get("simpleStringJson")
-      ,cleanSource=definition.get("cleanSource", "OFF")
-      ,cleanSource_retentionDuration=definition.get("cleanSource_retentionDuration", "7 days")
-      ,maxFilesPerTrigger=definition.get("maxFilesPerTrigger", 100)
-      ,cloudFiles_useNotifications=definition.get("cloudFiles_useNotifications", "true")
+      ,cleanSource = definition.get("cleanSource", "OFF")
+      ,cleanSource_retentionDuration = definition.get("cleanSource_retentionDuration", "7 days")
+      ,maxFilesPerTrigger = definition.get("maxFilesPerTrigger", 100)
+      ,cloudFiles_useNotifications = definition.get("cloudFiles_useNotifications", "true")
   )
 
   mrf.ingest()
